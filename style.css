@@ -1,0 +1,84 @@
+body{
+    font-family: Arial, Helvetica, sans-serif;
+    text-align: center;
+}
+
+hr{
+    width: 500px;
+}
+
+.btn{
+    width: 150px;
+    height: 40px;
+    background-color: rgb(107, 107, 223);
+}
+
+#errores{
+    color: rgb(249, 38, 38);
+}
+
+#tablero{
+    width: 450px;
+    height: 450px;
+
+    margin: 0 auto;
+    display: flex;
+    flex-wrap: wrap;
+}
+
+.casilla{
+    width: 48px;
+    height: 48px;
+    border: 1px solid lightgray;
+
+    font-size: 20px;
+    font-weight: bold;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+#numeros{
+    width: 450px;
+    height: 50px;
+
+
+    margin: 0 auto;
+    display: flex;
+    flex-wrap: wrap;
+
+}
+
+.numero{
+    width: 44px;
+    height: 44px;
+    border: 1px solid black;
+    margin: 2px;
+
+    font-size: 20px;
+    font-weight: bold;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+.numero-seleccionado{
+    background-color: gray;
+}
+
+.casilla-inicial{
+    background-color: whitesmoke;
+}
+
+.linea-vertical{
+    border-right: 1px solid black;
+}
+
+.linea-horizontal{
+    border-bottom: 1px solid black;
+}
+
+
+.numErroneo{
+    color: red;
+}
