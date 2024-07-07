@@ -36,6 +36,7 @@ hr{
     display: flex;
     justify-content: center;
     align-items: center;
+    user-select: none;
 }
 
 #numeros{
@@ -60,6 +61,8 @@ hr{
     display: flex;
     justify-content: center;
     align-items: center;
+    cursor: pointer;
+    user-select: none;
 }
 
 .numero-seleccionado{
@@ -67,7 +70,7 @@ hr{
 }
 
 .casilla-inicial{
-    background-color: whitesmoke;
+    background-color: rgb(243, 235, 235);
 }
 
 .linea-vertical{
@@ -81,4 +84,10 @@ hr{
 
 .numErroneo{
     color: red;
+}
+
+.numTerminado{
+    background-color: #8d8b8b5b;
+    color: #1b1b1b3a;
+    border: none;
 }
