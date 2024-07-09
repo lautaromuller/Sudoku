@@ -62,7 +62,7 @@ function seleccionarTablero(nivel, indice) {
     document.getElementById("tablero").remove()
     const div = document.createElement("div")
     div.id = "tablero"
-    //Agregamos el tablero arriba del div
+    //Agregamos el texto de error arriba del div
     errores.insertAdjacentElement('afterend', div);
     crearTablero()
 }
@@ -114,6 +114,7 @@ function cargarJuego() {
         //Llamamos si selecciona un numero
         numero.addEventListener("click", seleccionarNumero)
         numero.classList.add("numero");
+        numero.classList.add("num-en-uso")
         document.getElementById("numeros").appendChild(numero)
     }
     //Llamado a la funcion que cuenta los numeros iniciales del tablero
@@ -174,7 +175,9 @@ function numeroCompleto(num) {
     //Bloqueamos el numero porque ya no hay más
     if (objRepeticiones[num] == 8) {
         numSeleccionado.classList.add("numTerminado")
+        numSeleccionado.classList.remove("num-en-uso")
         arrNumerosTerminados.push(num)
+        numSeleccionado = null
     }
     //Si todavia hay numeros solo sumamos
     else {
