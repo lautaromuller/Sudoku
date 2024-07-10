@@ -26,9 +26,43 @@ hr{
     background-color: #42a362;
 }
 
-#errores{
-    color: rgb(212, 80, 109);
+#status{
+    margin: 6px auto 4px;
+    width: 400px;
+    display: flex;
+    align-items: center;
 }
+
+#errores{
+    /* position: absolute;
+    top: -12px;
+    left: 70px; */
+    color: rgb(212, 80, 109);
+    flex-grow: 1;
+    margin: 0 0 0 35px;
+}
+
+.btn-comenzar{
+    width: 200px;
+    height: 40px;
+    background-color: #0f405a;
+    border: 1px solid rgb(145, 178, 206);
+    cursor: pointer;
+    color: rgb(219, 225, 230);
+}
+
+.btn-comenzar:hover{
+    background-color: rgb(56, 107, 146);
+    border: 1px solid rgb(56, 107, 146);
+}
+
+p{
+    /* position: absolute;
+    right: 20px;
+    top: -3px; */
+    color: white;
+}
+
 
 #tablero{
     width: 450px;
