@@ -27,40 +27,48 @@ hr{
 }
 
 #status{
-    margin: 6px auto 4px;
-    width: 400px;
+    position: relative;
+    margin: 4px auto 2px;
+    width: 450px;
+
     display: flex;
     align-items: center;
-}
-
-#errores{
-    /* position: absolute;
-    top: -12px;
-    left: 70px; */
-    color: rgb(212, 80, 109);
-    flex-grow: 1;
-    margin: 0 0 0 35px;
-}
-
-.btn-comenzar{
-    width: 200px;
-    height: 40px;
-    background-color: #0f405a;
-    border: 1px solid rgb(145, 178, 206);
-    cursor: pointer;
-    color: rgb(219, 225, 230);
-}
-
-.btn-comenzar:hover{
-    background-color: rgb(56, 107, 146);
-    border: 1px solid rgb(56, 107, 146);
+    justify-content: space-around;
 }
 
 p{
-    /* position: absolute;
-    right: 20px;
-    top: -3px; */
     color: white;
+}
+
+#errores{
+    width: 30px;
+    margin-left: 290px;
+    text-align: start;
+    color: rgb(212, 80, 109);
+}
+
+.btn-comenzar{
+    position: absolute;
+    width: 250px;
+    height: 40px;
+    background-color: rgb(49, 95, 131);
+
+    border: none;
+    outline: none;
+    
+    cursor: pointer;
+    color: rgb(253, 252, 253);
+}
+
+.reiniciar{
+    background-color: #031824;
+    font-weight: 400;
+}
+
+.btn-comenzar:hover{
+    background-color: #0f405a;
+    border: 2px solid rgb(56, 107, 146);
+    color: rgb(165, 199, 224);
 }
 
 

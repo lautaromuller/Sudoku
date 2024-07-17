@@ -3,10 +3,13 @@ import data from './tableros.json' with { type: 'json' };
 const btnFacil = document.querySelector(".btn-facil");
 const btnMedio = document.querySelector(".btn-medio");
 const btnDificil = document.querySelector(".btn-dificil");
-const errores = document.getElementById('errores');
+const btnComenzar = document.querySelector('.btn-comenzar');
+const divStatus = document.getElementById('status');
+const textoTiempo = document.querySelector("p");
 
-//numero que vamos a colocar en el tablero
+
 var numSeleccionado = null
+var juegoEmpezado = false;
 
 //Tablero inicial
 var tablero = data["facil"][0].tablero;
@@ -24,33 +27,69 @@ var arrNumerosTerminados = []
 
 //Manejadores de eventos de los botones de dificultad
 btnFacil.addEventListener("click", () => {
-    contFacil += 1;
-    if (contFacil > 9) contFacil = 0
-    //Cambiamos texto del boton
-    btnFacil.innerHTML = `Facil ${contFacil + 1}/10`
-    //Llamamos a la funcion que trae el tablero
-    seleccionarTablero("facil", contFacil)
-    //Reiniciamos e iniciamos los valores necesarios
-    reiniciarContadores();
-    contarNumTablero(tablero)
+    if (!juegoEmpezado) {
+        contFacil += 1;
+        if (contFacil > 9) contFacil = 0
+        //Cambiamos texto del boton
+        btnFacil.innerHTML = `Facil ${contFacil + 1}/10`
+        //Llamamos a la funcion que trae el tablero
+        seleccionarTablero("facil", contFacil)
+        //Reiniciamos e iniciamos los valores necesarios
+        reiniciarContadores();
+        contarNumTablero(tablero)
+    }
 })
 
 btnMedio.addEventListener("click", () => {
-    contMedio += 1;
-    if (contMedio > 9) contMedio = 0
-    btnMedio.innerHTML = `Medio ${contMedio + 1}/10`
-    seleccionarTablero("medio", contMedio)
-    reiniciarContadores();
-    contarNumTablero(tablero)
+    if (!juegoEmpezado) {
+        contMedio += 1;
+        if (contMedio > 9) contMedio = 0
+        btnMedio.innerHTML = `Medio ${contMedio + 1}/10`
+        seleccionarTablero("medio", contMedio)
+        reiniciarContadores();
+        contarNumTablero(tablero)
+    }
 })
 
 btnDificil.addEventListener("click", () => {
-    contDificil += 1;
-    if (contDificil > 9) contDificil = 0
-    btnDificil.innerHTML = `Dificil ${contDificil + 1}/10`
-    seleccionarTablero("dificil", contDificil)
-    reiniciarContadores();
-    contarNumTablero(tablero)
+    if (!juegoEmpezado) {
+        contDificil += 1;
+        if (contDificil > 9) contDificil = 0
+        btnDificil.innerHTML = `Dificil ${contDificil + 1}/10`
+        seleccionarTablero("dificil", contDificil)
+        reiniciarContadores();
+        contarNumTablero(tablero)
+    }
+})
+
+let intervalTiempo;
+
+btnComenzar.addEventListener("click", () => {
+    if (!juegoEmpezado) {
+        juegoEmpezado = true;
+        btnComenzar.innerHTML = "REINICIAR";
+
+        //Arreglar tiempo al mostrarse
+        var t = Date.now();
+        intervalTiempo = setInterval(function(){
+            textoTiempo.innerText = "00:0" +parseInt((Date.now() - t)/1000);
+        }, 1000);
+    }
+    else {
+        juegoEmpezado = false;
+        btnComenzar.innerHTML = "COMENZAR JUEGO";
+        if(numSeleccionado != null) numSeleccionado.classList.remove("numero-seleccionado")
+        seleccionarTablero("facil", contFacil)
+        reiniciarContadores();
+
+        
+        clearInterval(intervalTiempo)
+        textoTiempo.innerText = "00:00"
+    }
+
+    btnComenzar.classList.toggle("reiniciar")
+
+    
 })
 
 
@@ -62,8 +101,8 @@ function seleccionarTablero(nivel, indice) {
     document.getElementById("tablero").remove()
     const div = document.createElement("div")
     div.id = "tablero"
-    //Agregamos el texto de error arriba del div
-    errores.insertAdjacentElement('afterend', div);
+    //Agregamos el tablero luego del div status
+    divStatus.insertAdjacentElement('afterend', div);
     crearTablero()
 }
 
@@ -104,6 +143,7 @@ window.onload = function () {
 }
 
 
+
 function cargarJuego() {
     //creando los números que manejan el juego
     for (let i = 1; i <= 9; i++) {
@@ -113,6 +153,7 @@ function cargarJuego() {
 
         //Llamamos si selecciona un numero
         numero.addEventListener("click", seleccionarNumero)
+
         numero.classList.add("numero");
         numero.classList.add("num-en-uso")
         document.getElementById("numeros").appendChild(numero)
@@ -125,13 +166,16 @@ function cargarJuego() {
 
 //Efecto el seleccionar un número
 function seleccionarNumero() {
-    //Si el numero no está completado entramos
-    if (!arrNumerosTerminados.includes(this.id)) {
-        if (numSeleccionado != null) {
-            numSeleccionado.classList.remove("numero-seleccionado")
+    if (juegoEmpezado) {
+
+        //Si el numero no está completado entramos
+        if (!arrNumerosTerminados.includes(this.id)) {
+            if (numSeleccionado != null) {
+                numSeleccionado.classList.remove("numero-seleccionado")
+            }
+            numSeleccionado = this;
+            numSeleccionado.classList.add("numero-seleccionado")
         }
-        numSeleccionado = this;
-        numSeleccionado.classList.add("numero-seleccionado")
     }
 }
 
@@ -193,15 +237,15 @@ function contarNumTablero(array) {
             if (numero !== "-") objRepeticiones[numero] = (objRepeticiones[numero] || 0) + 1;
         })
     });
-    console.log(objRepeticiones)
 }
 
 const reiniciarContadores = () => {
     numSeleccionado = null
 
     contErrores = 0;
-
+    document.getElementById("errores").innerText = contErrores;
     objRepeticiones = {}
     arrNumerosTerminados = []
-
 }
+
+
