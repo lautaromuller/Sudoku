@@ -5,25 +5,31 @@ const btnMedio = document.querySelector(".btn-medio");
 const btnDificil = document.querySelector(".btn-dificil");
 const btnComenzar = document.querySelector('.btn-comenzar');
 const divStatus = document.getElementById('status');
-const textoTiempo = document.querySelector("p");
+const textoTiempo = document.getElementById("tiempo");
 
 
-var numSeleccionado = null
-var juegoEmpezado = false;
+let numSeleccionado = null
+let juegoEmpezado = false;
+
+//variables para manejo de tiempo
+let intervalTiempo;
+let tiempoActual = 0;
 
 //Tablero inicial
-var tablero = data["facil"][0].tablero;
-var solucion = data["facil"][0].solucion;
+let tablero = data["facil"][0].tablero;
+let solucion = data["facil"][0].solucion;
 
 //Contadores
-var contErrores = 0;
-var contFacil = 0;
-var contMedio = 0;
-var contDificil = 0;
+let contErrores = 0;
+let contFacil = 0;
+let contMedio = 0;
+let contDificil = 0;
 
 //Arrays para deshabilitar los numeros ya encontrados
-var objRepeticiones = {}
-var arrNumerosTerminados = []
+let objRepeticiones = {}
+let arrNumerosTerminados = []
+
+
 
 //Manejadores de eventos de los botones de dificultad
 btnFacil.addEventListener("click", () => {
@@ -62,18 +68,11 @@ btnDificil.addEventListener("click", () => {
     }
 })
 
-let intervalTiempo;
-
 btnComenzar.addEventListener("click", () => {
     if (!juegoEmpezado) {
         juegoEmpezado = true;
         btnComenzar.innerHTML = "REINICIAR";
-
-        //Arreglar tiempo al mostrarse
-        var t = Date.now();
-        intervalTiempo = setInterval(function(){
-            textoTiempo.innerText = "00:0" +parseInt((Date.now() - t)/1000);
-        }, 1000);
+        start();
     }
     else {
         juegoEmpezado = false;
@@ -81,16 +80,12 @@ btnComenzar.addEventListener("click", () => {
         if(numSeleccionado != null) numSeleccionado.classList.remove("numero-seleccionado")
         seleccionarTablero("facil", contFacil)
         reiniciarContadores();
-
-        
-        clearInterval(intervalTiempo)
-        textoTiempo.innerText = "00:00"
+        stop();
     }
 
     btnComenzar.classList.toggle("reiniciar")
-
-    
 })
+
 
 
 //Función que cambia el tablero según el boton seleccionado
@@ -105,7 +100,6 @@ function seleccionarTablero(nivel, indice) {
     divStatus.insertAdjacentElement('afterend', div);
     crearTablero()
 }
-
 
 //Función que dibuja el tablero
 function crearTablero() {
@@ -137,12 +131,14 @@ function crearTablero() {
     }
 }
 
+
+
+
+
 //Carga del primer tablero al iniciar la página
 window.onload = function () {
     cargarJuego()
 }
-
-
 
 function cargarJuego() {
     //creando los números que manejan el juego
@@ -163,6 +159,10 @@ function cargarJuego() {
     //Llamado a función que dibuja el tablero
     crearTablero()
 }
+
+
+
+
 
 //Efecto el seleccionar un número
 function seleccionarNumero() {
@@ -215,6 +215,9 @@ function seleccionarCasilla() {
 }
 
 
+
+
+
 function numeroCompleto(num) {
     //Bloqueamos el numero porque ya no hay más
     if (objRepeticiones[num] == 8) {
@@ -239,6 +242,10 @@ function contarNumTablero(array) {
     });
 }
 
+
+
+
+
 const reiniciarContadores = () => {
     numSeleccionado = null
 
@@ -248,4 +255,26 @@ const reiniciarContadores = () => {
     arrNumerosTerminados = []
 }
 
+const stop = () => {
+    tiempoActual = 0;
+    clearInterval(intervalTiempo);
+    textoTiempo.textContent = "00:00";
+}
 
+const start = () => {
+    let t = Date.now() - tiempoActual;
+    intervalTiempo = setInterval(() => {
+        tiempoActual = Date.now() - t;
+        textoTiempo.textContent = calcularTiempo(tiempoActual);
+    },1000)
+}
+
+const calcularTiempo = (tiempoActual) => {
+    const segundos = Math.floor(tiempoActual/1000)
+    const minutos = Math.floor(segundos/60)
+
+    const msjSegundos = (segundos % 60).toString().padStart(2,"0");
+    const msjMinutos = minutos.toString().padStart(2,"0")
+
+    return `${msjMinutos}:${msjSegundos}`
+}
