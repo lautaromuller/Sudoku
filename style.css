@@ -38,17 +38,20 @@ hr{
 
 p{
     color: white;
+    padding-left: 10px;
 }
 
 #errores{
     width: 30px;
-    margin-left: 290px;
+    padding-right: 10px;
+    margin-left: 300px;
     text-align: start;
     color: rgb(212, 80, 109);
 }
 
 .btn-comenzar{
     position: absolute;
+    
     width: 250px;
     height: 40px;
     background-color: rgb(49, 95, 131);
@@ -60,15 +63,21 @@ p{
     color: rgb(253, 252, 253);
 }
 
-.reiniciar{
-    background-color: #031824;
-    font-weight: 400;
-}
-
 .btn-comenzar:hover{
     background-color: #0f405a;
     border: 2px solid rgb(56, 107, 146);
     color: rgb(165, 199, 224);
+}
+
+.reiniciar{
+    background-color: #010b11;
+    font-weight: 400;
+}
+
+.reiniciar:hover{
+    background-color: #113e5e;
+    border: 2px solid rgb(32, 93, 143);
+    color: rgb(230, 235, 241);
 }
 
 
@@ -155,4 +164,22 @@ p{
     background-color: #448bb121;
     color: #e6e9f03a;
     border: 1px solid rgba(46, 49, 51, 0.171);
+}
+
+
+.btn-pausar{
+    position: absolute;
+    left: 55px;
+    height: 12px;
+    border-style: double;
+    border-width: 0 0 0 12px;
+    cursor: pointer;
+    margin-left: 15px;
+    border-color: transparent transparent transparent rgb(212, 80, 109);
+    background-color: transparent;
+}
+
+.reanudar{
+    border-width: 6px 0 6px 12px;
+    border-style: solid;
 }

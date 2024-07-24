@@ -3,10 +3,11 @@ import data from './tableros.json' with { type: 'json' };
 const btnFacil = document.querySelector(".btn-facil");
 const btnMedio = document.querySelector(".btn-medio");
 const btnDificil = document.querySelector(".btn-dificil");
-const btnComenzar = document.querySelector('.btn-comenzar');
+const btnComenzar = document.getElementById('btnComenzar');
 const divStatus = document.getElementById('status');
 const textoTiempo = document.getElementById("tiempo");
-
+const textoErrores = document.getElementById("errores");
+const btnPausa = document.getElementById('btnPausa');
 
 let numSeleccionado = null
 let juegoEmpezado = false;
@@ -14,6 +15,7 @@ let juegoEmpezado = false;
 //variables para manejo de tiempo
 let intervalTiempo;
 let tiempoActual = 0;
+let pausado = true;
 
 //Tablero inicial
 let tablero = data["facil"][0].tablero;
@@ -28,7 +30,6 @@ let contDificil = 0;
 //Arrays para deshabilitar los numeros ya encontrados
 let objRepeticiones = {}
 let arrNumerosTerminados = []
-
 
 
 //Manejadores de eventos de los botones de dificultad
@@ -71,19 +72,39 @@ btnDificil.addEventListener("click", () => {
 btnComenzar.addEventListener("click", () => {
     if (!juegoEmpezado) {
         juegoEmpezado = true;
-        btnComenzar.innerHTML = "REINICIAR";
+        btnComenzar.textContent = "REINICIAR";
+        textoTiempo.style.paddingLeft = '0px'
+        textoErrores.style.paddingRight = '7px'
+
+        if(btnPausa.classList.contains("reanudar")){
+            btnPausa.classList.remove("reanudar")
+            pausado = true
+        }
+
         start();
     }
     else {
         juegoEmpezado = false;
-        btnComenzar.innerHTML = "COMENZAR JUEGO";
+        btnComenzar.textContent = "COMENZAR JUEGO";
+        btnComenzar.style.left = '100px'
+        textoTiempo.style.paddingLeft = '10px'
+        textoErrores.style.paddingRight = '10px'
+
         if(numSeleccionado != null) numSeleccionado.classList.remove("numero-seleccionado")
         seleccionarTablero("facil", contFacil)
         reiniciarContadores();
+
         stop();
     }
 
+    btnPausa.toggleAttribute("hidden")
     btnComenzar.classList.toggle("reiniciar")
+})
+
+btnPausa.addEventListener("click", () => {
+    btnPausa.classList.toggle("reanudar")
+    pausado = !pausado;
+    pause();
 })
 
 
@@ -206,7 +227,7 @@ function seleccionarCasilla() {
                 this.innerText = numSeleccionado.id
                 //Sumamos errores y lo mostramos
                 contErrores++
-                document.getElementById("errores").innerText = contErrores;
+                textoErrores.innerText = contErrores;
                 //Efecto de error
                 this.classList.add("numErroneo")
             }
@@ -255,10 +276,23 @@ const reiniciarContadores = () => {
     arrNumerosTerminados = []
 }
 
+
+
 const stop = () => {
     tiempoActual = 0;
     clearInterval(intervalTiempo);
     textoTiempo.textContent = "00:00";
+}
+
+const pause = () => {
+    if(!pausado){
+        // btnPausa.textContent = "REANUDAR";
+        clearInterval(intervalTiempo)
+    }else{
+        // btnPausa.textContent = "PAUSAR";
+        start();
+    }
+    
 }
 
 const start = () => {
