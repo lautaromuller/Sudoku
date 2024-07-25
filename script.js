@@ -15,7 +15,7 @@ let juegoEmpezado = false;
 //variables para manejo de tiempo
 let intervalTiempo;
 let tiempoActual = 0;
-let pausado = true;
+let pausado = false;
 
 //Tablero inicial
 let tablero = data["facil"][0].tablero;
@@ -78,7 +78,7 @@ btnComenzar.addEventListener("click", () => {
 
         if(btnPausa.classList.contains("reanudar")){
             btnPausa.classList.remove("reanudar")
-            pausado = true
+            pausado = false
         }
 
         start();
@@ -104,6 +104,9 @@ btnComenzar.addEventListener("click", () => {
 btnPausa.addEventListener("click", () => {
     btnPausa.classList.toggle("reanudar")
     pausado = !pausado;
+    if(numSeleccionado != null) numSeleccionado.classList.remove("numero-seleccionado")
+    numSeleccionado = null;
+
     pause();
 })
 
@@ -187,7 +190,7 @@ function cargarJuego() {
 
 //Efecto el seleccionar un número
 function seleccionarNumero() {
-    if (juegoEmpezado) {
+    if (juegoEmpezado && !pausado) {
 
         //Si el numero no está completado entramos
         if (!arrNumerosTerminados.includes(this.id)) {
@@ -285,7 +288,7 @@ const stop = () => {
 }
 
 const pause = () => {
-    if(!pausado){
+    if(pausado){
         // btnPausa.textContent = "REANUDAR";
         clearInterval(intervalTiempo)
     }else{
