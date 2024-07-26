@@ -9,17 +9,25 @@ h1{
 }
 
 hr{
-    width: 500px;
+    width: 31.25em;
+}
+
+#niveles{
+    display: flex;
+    flex-direction: row;
+    width: 100%;
+    justify-content: center;
 }
 
 .btn{
-    width: 150px;
-    height: 40px;
+    width: 11.075em;
+    height: 3em;
     background-color: #298f4b;
     border: none;
     font-weight: 600;
     cursor: pointer;
     color: rgb(10, 9, 15);
+    margin: 0 3px;
 }
 
 .btn:hover{
@@ -52,8 +60,8 @@ p{
 .btn-comenzar{
     position: absolute;
     
-    width: 250px;
-    height: 40px;
+    width: 18em;
+    height: 3em;
     background-color: rgb(49, 95, 131);
 
     border: none;
@@ -82,8 +90,8 @@ p{
 
 
 #tablero{
-    width: 450px;
-    height: 450px;
+    width: 28.125em;
+    height: 28.125em;
     border: 3px solid #000000;
 
     margin: 0 auto;
@@ -92,12 +100,12 @@ p{
 }
 
 .casilla{
-    width: 48px;
-    height: 48px;
+    width: 2.4em;
+    height: 2.4em;
     background-color: rgb(245, 250, 250);
     border: 1px solid rgb(192, 190, 190);
 
-    font-size: 20px;
+    font-size: 1.25em;
     font-weight: bold;
     display: flex;
     justify-content: center;
@@ -106,8 +114,8 @@ p{
 }
 
 #numeros{
-    width: 450px;
-    height: 50px;
+    width: 28.125em;
+    height: 3.125em;
 
 
     margin: 0 auto;
@@ -117,14 +125,14 @@ p{
 }
 
 .numero{
-    width: 44px;
-    height: 44px;
+    width: 2.15em;
+    height: 2.15em;
     background-color: #72b9df;
     border: 1px solid rgb(0, 0, 0);
     color: rgb(4, 3, 17);
     margin: 2px;
 
-    font-size: 20px;
+    font-size: 1.25em;
     font-weight: bold;
     display: flex;
     justify-content: center;
@@ -169,7 +177,8 @@ p{
 
 .btn-pausar{
     position: absolute;
-    left: 55px;
+    left: -11px;
+    top: 27px;
     height: 12px;
     border-style: double;
     border-width: 0 0 0 12px;
@@ -188,6 +197,122 @@ p{
     background-color: rgb(124, 146, 155);
 }
 
-.casillaNumSeleccionado2{
+.filaColumnaNumSeleccionado{
     background-color: rgb(207, 211, 228);
+}
+
+
+@media (max-width: 500px) {
+    #niveles{
+        flex-direction: column;
+        align-items: center;
+    }
+
+    .btn{
+        width: 28.125em;
+        margin-bottom: 8px;
+    }
+
+    #status{
+        width: 23.325em;
+        justify-content: space-evenly;
+        align-items: center;
+        margin-bottom: 45px;
+        margin-top: -10px;
+    }
+    
+    p{
+        font-size: 20px;
+        line-height: 25px;
+    }
+    
+    #errores{
+        margin-left: 0;
+        font-size: 25px;
+    }
+    
+    .btn-comenzar{
+        width: 100%;
+        top: 65px;
+    }
+
+    #tablero{
+        width: 23.125em;
+        height: 23.125em;
+        border: 2px solid #000;
+    }
+    
+    .casilla{
+        width: 1.955em;
+        height: 1.955em;
+    }
+
+    #numeros{
+        width: 23.125em;
+        height: 3.125em;    
+    }
+    
+    .numero{
+        width: 2.28em;
+        height: 2.28em;
+        margin: 1px;
+    
+        font-size: 1em;
+    }
+
+    .btn-pausar{
+        left: 60px;
+        top: 29px;
+    }
+}
+
+@media (max-width: 405px) {
+    .btn{
+        width: 23.425em;
+    }
+
+    #status{
+        width: 19.525em;
+        margin-bottom: 37px;
+    }
+
+    p{
+        font-size: 20px;
+        line-height: 20px;
+    }
+    
+    #errores{
+        font-size: 25px;
+    }
+
+    .btn-comenzar{
+        top: 60px;
+    }
+
+    #tablero{
+        width: 19.425em;
+        height: 19.425em;
+        border: 1px solid #000;
+    }
+    
+    .casilla{
+        width: 1.627em;
+        height: 1.627em;
+    }
+
+    #numeros{
+        width: 19.425em;
+        height: 3.125em;    
+    }
+    
+    .numero{
+        width: 1.90em;
+        height: 1.90em;
+        margin: 1px;
+    }
+
+    .btn-pausar{
+        left: 45px;
+        top: 29px;
+    }
 }

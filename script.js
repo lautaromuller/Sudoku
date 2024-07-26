@@ -75,8 +75,6 @@ btnComenzar.addEventListener("click", () => {
     if (!juegoEmpezado) {
         juegoEmpezado = true;
         btnComenzar.textContent = "REINICIAR";
-        textoTiempo.style.paddingLeft = '0px'
-        textoErrores.style.paddingRight = '7px'
 
         if (btnPausa.classList.contains("reanudar")) {
             btnPausa.classList.remove("reanudar")
@@ -88,9 +86,6 @@ btnComenzar.addEventListener("click", () => {
     else {
         juegoEmpezado = false;
         btnComenzar.textContent = "COMENZAR JUEGO";
-        btnComenzar.style.left = '100px'
-        textoTiempo.style.paddingLeft = '10px'
-        textoErrores.style.paddingRight = '10px'
 
         if (numSeleccionado != null) numSeleccionado.classList.remove("numero-seleccionado")
         seleccionarTablero("facil", contFacil)
@@ -337,19 +332,19 @@ const marcarNumero = () => {
                 //Si coincide el numero seleccionado con la casilla lo marcamos
                 if (elem.innerHTML == numSeleccionado.id) {
                     elem.classList.add('casillaNumSeleccionado')
-                    elem.classList.remove('casillaNumSeleccionado2')
+                    elem.classList.remove('filaColumnaNumSeleccionado')
 
                     //Guardamos la fila y la columna donde está el número que coincide
                     arrFila.push(f)
                     arrColumna.push(c)
-                    
+
                 //Pintamos las filas y columnas donde estan los números
                 } else if (arrFila.includes(f) || arrColumna.includes(c)) {
-                    elem.classList.add('casillaNumSeleccionado2')
+                    elem.classList.add('filaColumnaNumSeleccionado')
                 }
                 else {
                     elem.classList.remove('casillaNumSeleccionado')
-                    elem.classList.remove('casillaNumSeleccionado2')
+                    elem.classList.remove('filaColumnaNumSeleccionado')
                 }
             }
         }
