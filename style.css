@@ -183,3 +183,11 @@ p{
     border-width: 6px 0 6px 12px;
     border-style: solid;
 }
+
+.casillaNumSeleccionado{
+    background-color: rgb(124, 146, 155);
+}
+
+.casillaNumSeleccionado2{
+    background-color: rgb(207, 211, 228);
+}

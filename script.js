@@ -1,5 +1,6 @@
 import data from './tableros.json' with { type: 'json' };
 
+//Elementos seleccionados
 const btnFacil = document.querySelector(".btn-facil");
 const btnMedio = document.querySelector(".btn-medio");
 const btnDificil = document.querySelector(".btn-dificil");
@@ -69,6 +70,7 @@ btnDificil.addEventListener("click", () => {
     }
 })
 
+//Manejador del evento click en el boton comenzar juego/reiniciar
 btnComenzar.addEventListener("click", () => {
     if (!juegoEmpezado) {
         juegoEmpezado = true;
@@ -76,7 +78,7 @@ btnComenzar.addEventListener("click", () => {
         textoTiempo.style.paddingLeft = '0px'
         textoErrores.style.paddingRight = '7px'
 
-        if(btnPausa.classList.contains("reanudar")){
+        if (btnPausa.classList.contains("reanudar")) {
             btnPausa.classList.remove("reanudar")
             pausado = false
         }
@@ -90,7 +92,7 @@ btnComenzar.addEventListener("click", () => {
         textoTiempo.style.paddingLeft = '10px'
         textoErrores.style.paddingRight = '10px'
 
-        if(numSeleccionado != null) numSeleccionado.classList.remove("numero-seleccionado")
+        if (numSeleccionado != null) numSeleccionado.classList.remove("numero-seleccionado")
         seleccionarTablero("facil", contFacil)
         reiniciarContadores();
 
@@ -101,11 +103,10 @@ btnComenzar.addEventListener("click", () => {
     btnComenzar.classList.toggle("reiniciar")
 })
 
+//Manejador del evento click en el boton de play/pausa
 btnPausa.addEventListener("click", () => {
     btnPausa.classList.toggle("reanudar")
     pausado = !pausado;
-    if(numSeleccionado != null) numSeleccionado.classList.remove("numero-seleccionado")
-    numSeleccionado = null;
 
     pause();
 })
@@ -164,6 +165,7 @@ window.onload = function () {
     cargarJuego()
 }
 
+//Cargar tablero de juego
 function cargarJuego() {
     //creando los números que manejan el juego
     for (let i = 1; i <= 9; i++) {
@@ -178,6 +180,7 @@ function cargarJuego() {
         numero.classList.add("num-en-uso")
         document.getElementById("numeros").appendChild(numero)
     }
+
     //Llamado a la funcion que cuenta los numeros iniciales del tablero
     contarNumTablero(tablero)
     //Llamado a función que dibuja el tablero
@@ -199,13 +202,14 @@ function seleccionarNumero() {
             }
             numSeleccionado = this;
             numSeleccionado.classList.add("numero-seleccionado")
+            marcarNumero();
         }
     }
 }
 
 //Efecto al seleccionar una casilla
 function seleccionarCasilla() {
-    if (numSeleccionado) {
+    if (numSeleccionado && !pausado) {
         //Armamos las coordenadas de la casilla
         let coords = this.id.split("-")
         let fila = parseInt(coords[0])
@@ -241,7 +245,7 @@ function seleccionarCasilla() {
 
 
 
-
+//Función para manejar el efecto cuando un número fue completado
 function numeroCompleto(num) {
     //Bloqueamos el numero porque ya no hay más
     if (objRepeticiones[num] == 8) {
@@ -256,7 +260,7 @@ function numeroCompleto(num) {
     }
 }
 
-//Funcion que cuenta los numeros iniciales en el tablero
+//Función que cuenta los numeros iniciales en el tablero
 function contarNumTablero(array) {
     array.forEach(function (string) {
         var arrString = string.split('')
@@ -269,7 +273,7 @@ function contarNumTablero(array) {
 
 
 
-
+//Esta función reinicia contadores
 const reiniciarContadores = () => {
     numSeleccionado = null
 
@@ -280,38 +284,75 @@ const reiniciarContadores = () => {
 }
 
 
-
+//Función que reinicia el tiempo de juego
 const stop = () => {
     tiempoActual = 0;
     clearInterval(intervalTiempo);
     textoTiempo.textContent = "00:00";
 }
-
+//Función que maneja la pausa del tiempo de juego
 const pause = () => {
-    if(pausado){
+    if (pausado) {
         // btnPausa.textContent = "REANUDAR";
         clearInterval(intervalTiempo)
-    }else{
+    } else {
         // btnPausa.textContent = "PAUSAR";
         start();
     }
-    
-}
 
+}
+//Función que maneja el inicio del tiempo de juego
 const start = () => {
     let t = Date.now() - tiempoActual;
     intervalTiempo = setInterval(() => {
         tiempoActual = Date.now() - t;
         textoTiempo.textContent = calcularTiempo(tiempoActual);
-    },1000)
+    }, 1000)
 }
 
+//Función que retorna el tiempo actual en minutos y segundos
 const calcularTiempo = (tiempoActual) => {
-    const segundos = Math.floor(tiempoActual/1000)
-    const minutos = Math.floor(segundos/60)
+    const segundos = Math.floor(tiempoActual / 1000)
+    const minutos = Math.floor(segundos / 60)
 
-    const msjSegundos = (segundos % 60).toString().padStart(2,"0");
-    const msjMinutos = minutos.toString().padStart(2,"0")
+    const msjSegundos = (segundos % 60).toString().padStart(2, "0");
+    const msjMinutos = minutos.toString().padStart(2, "0")
 
     return `${msjMinutos}:${msjSegundos}`
+}
+
+
+//Marcar las casillas que contengan el numero seleccionado
+const marcarNumero = () => {
+    let arrFila = [];
+    let arrColumna = [];
+
+    let cont = 0
+    while (cont < 3) {
+
+        for (let f = 0; f < 9; f++) {
+            for (let c = 0; c < 9; c++) {
+                let elem = document.getElementById(`${f}-${c}`)
+
+                //Si coincide el numero seleccionado con la casilla lo marcamos
+                if (elem.innerHTML == numSeleccionado.id) {
+                    elem.classList.add('casillaNumSeleccionado')
+                    elem.classList.remove('casillaNumSeleccionado2')
+
+                    //Guardamos la fila y la columna donde está el número que coincide
+                    arrFila.push(f)
+                    arrColumna.push(c)
+                    
+                //Pintamos las filas y columnas donde estan los números
+                } else if (arrFila.includes(f) || arrColumna.includes(c)) {
+                    elem.classList.add('casillaNumSeleccionado2')
+                }
+                else {
+                    elem.classList.remove('casillaNumSeleccionado')
+                    elem.classList.remove('casillaNumSeleccionado2')
+                }
+            }
+        }
+        cont++;
+    }
 }
