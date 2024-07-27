@@ -165,7 +165,8 @@ p{
 
 
 .numErroneo{
-    color: rgb(255, 0, 0);
+    color: rgb(223, 15, 15);
+    font-weight: 600;
 }
 
 .numTerminado{
