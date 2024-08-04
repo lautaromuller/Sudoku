@@ -121,6 +121,7 @@ function seleccionarTablero(nivel, indice) {
     crearTablero()
 }
 
+let cas = []
 //Función que dibuja el tablero
 function crearTablero() {
     for (let f = 0; f < 9; f++) {
@@ -142,13 +143,33 @@ function crearTablero() {
             if (c == 2 || c == 5) {
                 casilla.classList.add("linea-vertical")
             }
-            //Si seleccionan una casilla llamamos
-            casilla.addEventListener("click", seleccionarCasilla)
 
             casilla.classList.add("casilla")
             document.getElementById("tablero").appendChild(casilla)
+            cas.push(casilla)
         }
     }
+}
+
+let casillaSelecionada = false
+const tab = document.getElementById('tablero')
+let casillaSelec;
+
+tab.addEventListener('mousedown', () => {
+    eventoCasilla()
+})
+
+const eventoCasilla = () => {
+    cas.forEach(casilla => {
+        casilla.classList.remove('casillaNumSeleccionado')
+        casilla.classList.remove('filaColumnaNumSeleccionado')
+
+        casilla.addEventListener('mouseup', () => {
+            casillaSelecionada = true
+            casillaSelec = casilla
+            marcarNumero(casillaSelec)
+        })
+    })
 }
 
 
@@ -188,55 +209,53 @@ function cargarJuego() {
 
 //Efecto el seleccionar un número
 function seleccionarNumero() {
-    if (juegoEmpezado && !pausado) {
-
-        //Si el numero no está completado entramos
-        if (!arrNumerosTerminados.includes(this.id)) {
-            if (numSeleccionado != null) {
-                numSeleccionado.classList.remove("numero-seleccionado")
-            }
-            numSeleccionado = this;
-            numSeleccionado.classList.add("numero-seleccionado")
-            marcarNumero();
-        }
+    if (juegoEmpezado && !pausado && casillaSelecionada && !arrNumerosTerminados.includes(this)) {
+        numSeleccionado = this
+        casillaSelec.innerHTML = numSeleccionado.id
+        seleccionarCasilla(casillaSelec)
     }
 }
 
+let arrCasillasResueltas = []
+
 //Efecto al seleccionar una casilla
-function seleccionarCasilla() {
+function seleccionarCasilla(a) {
+
     if (numSeleccionado && !pausado) {
+
         //Armamos las coordenadas de la casilla
-        let coords = this.id.split("-")
+        let coords = a.id.split("-")
         let fila = parseInt(coords[0])
         let columna = parseInt(coords[1])
+
         //Si el tablero no estaba escrito inicialmente entramos
-        if (tablero[fila][columna] == "-") {
+        if (solucion[fila][columna] == numSeleccionado.id && !arrCasillasResueltas.includes(tablero[fila][columna])) {
 
-            //Si acierta entramos aca
-            if (solucion[fila][columna] == numSeleccionado.id) {
-                this.innerText = numSeleccionado.id
-                // llamado a función que verifica si encontramos las 9 apariciones del numero
-                numeroCompleto(numSeleccionado.id)
+            arrCasillasResueltas.push(solucion[fila][columna])
+            //Lo marcamos como encontrado
+            a.classList.add("encontrado")
+            //Si tiene le quitamos el efecto de fallo
+            if (a.classList.contains("numErroneo")) a.classList.remove("numErroneo")
 
-                //Lo marcamos como encontrado
-                this.classList.add("encontrado")
-                //Si tiene le quitamos el efecto de fallo
-                if (this.classList.contains("numErroneo")) this.classList.remove("numErroneo")
-            }
+            numeroCompleto(numSeleccionado.id)
+        }
+        else {
+
             //Si erra y no es el mismo numero que está puesto entramos aca
-            else if (!(this.classList.contains("encontrado")) && this.innerText != numSeleccionado.id) {
+            if (!(a.classList.contains("encontrado"))) {
+
                 //Cambiamos el numero en pantalla
-                this.innerText = numSeleccionado.id
+                a.innerText = numSeleccionado.id
                 //Sumamos errores y lo mostramos
                 contErrores++
                 textoErrores.innerText = contErrores;
                 //Efecto de error
-                this.classList.add("numErroneo")
+                a.classList.add("numErroneo")
             }
         }
     }
+    marcarNumero(casillaSelec)
 }
-
 
 
 
@@ -246,7 +265,7 @@ function numeroCompleto(num) {
     if (objRepeticiones[num] == 8) {
         numSeleccionado.classList.add("numTerminado")
         numSeleccionado.classList.remove("num-en-uso")
-        arrNumerosTerminados.push(num)
+        arrNumerosTerminados.push(numSeleccionado)
         numSeleccionado = null
     }
     //Si todavia hay numeros solo sumamos
@@ -270,12 +289,18 @@ function contarNumTablero(array) {
 
 //Esta función reinicia contadores
 const reiniciarContadores = () => {
-    numSeleccionado = null
+    arrNumerosTerminados.forEach(e => {
+        e.classList.remove("numTerminado")
+        e.classList.add("num-en-uso")
+    })
 
     contErrores = 0;
     document.getElementById("errores").innerText = contErrores;
     objRepeticiones = {}
     arrNumerosTerminados = []
+    casillaSelec = null
+    casillaSelecionada = false
+    eventoCasilla()
 }
 
 
@@ -317,37 +342,38 @@ const calcularTiempo = (tiempoActual) => {
 }
 
 
-//Marcar las casillas que contengan el numero seleccionado
-const marcarNumero = () => {
-    let arrFila = [];
-    let arrColumna = [];
 
-    let cont = 0
-    while (cont < 3) {
+//Marcar las casillas que contengan el numero seleccionado
+const marcarNumero = (a) => {
+    if (juegoEmpezado) {
 
         for (let f = 0; f < 9; f++) {
             for (let c = 0; c < 9; c++) {
+
                 let elem = document.getElementById(`${f}-${c}`)
 
-                //Si coincide el numero seleccionado con la casilla lo marcamos
-                if (elem.innerHTML == numSeleccionado.id) {
-                    elem.classList.add('casillaNumSeleccionado')
-                    elem.classList.remove('filaColumnaNumSeleccionado')
+                elem.classList.remove('filaColumnaNumSeleccionado')
+                elem.classList.remove('casillaNumSeleccionado')
+                elem.classList.remove('casillaNumOcupado')
 
-                    //Guardamos la fila y la columna donde está el número que coincide
-                    arrFila.push(f)
-                    arrColumna.push(c)
+                let b = elem.id.split('-')
+                let ab = a.id.split('-')
 
-                //Pintamos las filas y columnas donde estan los números
-                } else if (arrFila.includes(f) || arrColumna.includes(c)) {
-                    elem.classList.add('filaColumnaNumSeleccionado')
+
+                if (a.innerHTML == '' && !elem.classList.contains("numErroneo")) {
+
+                    if (b[0] == ab[0] && b[1] != ab[1]) {
+                        elem.classList.add('filaColumnaNumSeleccionado')
+                    } else if (b[1] == ab[1] && b[0] != ab[0]) {
+                        elem.classList.add('filaColumnaNumSeleccionado')
+                    }
+
+                    a.classList.add('casillaNumSeleccionado')
                 }
-                else {
-                    elem.classList.remove('casillaNumSeleccionado')
-                    elem.classList.remove('filaColumnaNumSeleccionado')
+                else if (elem.innerHTML == a.innerHTML && !a.classList.contains("numErroneo")) {
+                        elem.classList.add('casillaNumOcupado')
                 }
             }
         }
-        cont++;
     }
 }
