@@ -9,6 +9,7 @@ const divStatus = document.getElementById('status');
 const textoTiempo = document.getElementById("tiempo");
 const textoErrores = document.getElementById("errores");
 const btnPausa = document.getElementById('btnPausa');
+const contenedorTablero = document.getElementById("contenedor-tablero")
 
 let numSeleccionado = null
 let juegoEmpezado = false;
@@ -27,9 +28,11 @@ let contErrores = 0;
 let contFacil = 0;
 let contMedio = 0;
 let contDificil = 0;
+let dificultad = "facil";
+let indice = 0;
 
 //Arrays para deshabilitar los numeros ya encontrados
-let objRepeticiones = {}
+let arrCasillasResueltas = []
 let arrNumerosTerminados = []
 
 
@@ -41,10 +44,11 @@ btnFacil.addEventListener("click", () => {
         //Cambiamos texto del boton
         btnFacil.innerHTML = `Facil ${contFacil + 1}/10`
         //Llamamos a la funcion que trae el tablero
+        dificultad = "facil"
+        indice = contFacil
         seleccionarTablero("facil", contFacil)
         //Reiniciamos e iniciamos los valores necesarios
         reiniciarContadores();
-        contarNumTablero(tablero)
     }
 })
 
@@ -53,9 +57,10 @@ btnMedio.addEventListener("click", () => {
         contMedio += 1;
         if (contMedio > 9) contMedio = 0
         btnMedio.innerHTML = `Medio ${contMedio + 1}/10`
+        dificultad = "medio"
+        indice = contMedio
         seleccionarTablero("medio", contMedio)
         reiniciarContadores();
-        contarNumTablero(tablero)
     }
 })
 
@@ -64,9 +69,10 @@ btnDificil.addEventListener("click", () => {
         contDificil += 1;
         if (contDificil > 9) contDificil = 0
         btnDificil.innerHTML = `Dificil ${contDificil + 1}/10`
+        dificultad = "dificil"
+        indice = contDificil
         seleccionarTablero("dificil", contDificil)
         reiniciarContadores();
-        contarNumTablero(tablero)
     }
 })
 
@@ -91,9 +97,10 @@ const reiniciarJuego = () => {
         juegoEmpezado = false;
         btnComenzar.textContent = "COMENZAR JUEGO";
 
-        if (numSeleccionado != null) numSeleccionado.classList.remove("numero-seleccionado")
-        seleccionarTablero("facil", contFacil)
-        reiniciarContadores();
+        if (numSeleccionado != null) {
+            numSeleccionado.classList.remove("numero-seleccionado")
+        }
+        seleccionarTablero(dificultad, indice)
 
         stop();
     }
@@ -111,7 +118,6 @@ btnPausa.addEventListener("click", () => {
 })
 
 
-
 //Función que cambia el tablero según el boton seleccionado
 function seleccionarTablero(nivel, indice) {
     tablero = data[nivel][indice].tablero
@@ -120,8 +126,9 @@ function seleccionarTablero(nivel, indice) {
     document.getElementById("tablero").remove()
     const div = document.createElement("div")
     div.id = "tablero"
-    //Agregamos el tablero luego del div status
-    divStatus.insertAdjacentElement('afterend', div);
+    //Agregamos el tablero dentro de su contenedor
+    contenedorTablero.appendChild(div)
+    reiniciarContadores()
     crearTablero()
 }
 
@@ -138,6 +145,7 @@ function crearTablero() {
             if (tablero[f][c] != "-") {
                 casilla.innerText = tablero[f][c]
                 casilla.classList.add("casilla-inicial")
+                arrCasillasResueltas.push(solucion[f][c])
             }
 
             //Lineas que marcan los cuadrados de 3x3
@@ -156,10 +164,9 @@ function crearTablero() {
 }
 
 let casillaSelecionada = false
-const tab = document.getElementById('tablero')
 let casillaSelec;
 
-tab.addEventListener('mousedown', () => {
+contenedorTablero.addEventListener('mousedown', () => {
     eventoCasilla()
 })
 
@@ -201,8 +208,6 @@ function cargarJuego() {
         document.getElementById("numeros").appendChild(numero)
     }
 
-    //Llamado a la funcion que cuenta los numeros iniciales del tablero
-    contarNumTablero(tablero)
     //Llamado a función que dibuja el tablero
     crearTablero()
 }
@@ -213,81 +218,69 @@ function cargarJuego() {
 
 //Efecto el seleccionar un número
 function seleccionarNumero() {
-    if (juegoEmpezado && !pausado && casillaSelecionada && !arrNumerosTerminados.includes(this) && !casillaSelec.classList.contains("encontrado")) {
+    if (juegoEmpezado && !pausado && casillaSelecionada && !arrNumerosTerminados.includes(this) && !casillaSelec.classList.contains("encontrado") && !casillaSelec.classList.contains("casilla-inicial")) {
         numSeleccionado = this
         casillaSelec.innerHTML = numSeleccionado.id
         seleccionarCasilla(casillaSelec)
     }
 }
 
-let arrCasillasResueltas = []
 
 //Efecto al seleccionar una casilla
 function seleccionarCasilla(a) {
+    //Armamos las coordenadas de la casilla
+    let coords = a.id.split("-")
+    let fila = parseInt(coords[0])
+    let columna = parseInt(coords[1])
 
-    if (numSeleccionado && !pausado) {
+    //Si el tablero no estaba escrito inicialmente entramos
+    if (solucion[fila][columna] == numSeleccionado.id && !arrCasillasResueltas.includes(tablero[fila][columna])) {
 
-        //Armamos las coordenadas de la casilla
-        let coords = a.id.split("-")
-        let fila = parseInt(coords[0])
-        let columna = parseInt(coords[1])
+        arrCasillasResueltas.push(solucion[fila][columna])
 
-        //Si el tablero no estaba escrito inicialmente entramos
-        if (solucion[fila][columna] == numSeleccionado.id && !arrCasillasResueltas.includes(tablero[fila][columna])) {
+        //Lo marcamos como encontrado
+        a.classList.add("encontrado")
+        //Si tiene le quitamos el efecto de fallo
+        if (a.classList.contains("numErroneo")) a.classList.remove("numErroneo")
 
-            arrCasillasResueltas.push(solucion[fila][columna])
-            //Lo marcamos como encontrado
-            a.classList.add("encontrado")
-            //Si tiene le quitamos el efecto de fallo
-            if (a.classList.contains("numErroneo")) a.classList.remove("numErroneo")
-
-            numeroCompleto(numSeleccionado.id)
-        }
-        else {
-            //Cambiamos el numero en pantalla
-            a.innerText = numSeleccionado.id
-            //Sumamos errores y lo mostramos
-            contErrores++
-            if (contErrores == 3) {
-                reiniciarJuego()
-            } else {
-                textoErrores.innerText = contErrores;
-                //Efecto de error
-                a.classList.add("numErroneo")
-            }
+        numeroCompleto(numSeleccionado.id)
+    }
+    else {
+        //Cambiamos el numero en pantalla
+        a.innerText = numSeleccionado.id
+        //Sumamos errores y lo mostramos
+        contErrores++
+        if (contErrores == 3) {
+            reiniciarJuego()
+        } else {
+            textoErrores.innerText = contErrores;
+            //Efecto de error
+            a.classList.add("numErroneo")
         }
     }
     marcarNumero(casillaSelec)
+
 }
 
 
 
 //Función para manejar el efecto cuando un número fue completado
 function numeroCompleto(num) {
+    let contApariciones = 0
     //Bloqueamos el numero porque ya no hay más
-    if (objRepeticiones[num] == 8) {
+    for (let i = 0; i < arrCasillasResueltas.length; i++) {
+        if (arrCasillasResueltas[i] == num) {
+            contApariciones++
+        }
+    }
+    console.log(arrCasillasResueltas)
+    if (contApariciones == 9) {
         numSeleccionado.classList.add("numTerminado")
         numSeleccionado.classList.remove("num-en-uso")
         arrNumerosTerminados.push(numSeleccionado)
         numSeleccionado = null
     }
-    //Si todavia hay numeros solo sumamos
-    else {
-        objRepeticiones[num] = (objRepeticiones[num] || 0) + 1;
-    }
 }
-
-//Función que cuenta los numeros iniciales en el tablero
-function contarNumTablero(array) {
-    array.forEach(function (string) {
-        var arrString = string.split('')
-        arrString.forEach(function (numero) {
-            if (numero !== "-") objRepeticiones[numero] = (objRepeticiones[numero] || 0) + 1;
-        })
-    });
-}
-
-
 
 
 //Esta función reinicia contadores
@@ -299,8 +292,8 @@ const reiniciarContadores = () => {
 
     contErrores = 0;
     document.getElementById("errores").innerText = contErrores;
-    objRepeticiones = {}
     arrNumerosTerminados = []
+    arrCasillasResueltas = []
     casillaSelec = null
     casillaSelecionada = false
     eventoCasilla()
@@ -348,7 +341,7 @@ const calcularTiempo = (tiempoActual) => {
 
 //Marcar las casillas que contengan el numero seleccionado
 const marcarNumero = (a) => {
-    if (juegoEmpezado) {
+    if (juegoEmpezado && !pausado) {
 
         for (let f = 0; f < 9; f++) {
             for (let c = 0; c < 9; c++) {
