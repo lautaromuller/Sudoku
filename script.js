@@ -72,6 +72,10 @@ btnDificil.addEventListener("click", () => {
 
 //Manejador del evento click en el boton comenzar juego/reiniciar
 btnComenzar.addEventListener("click", () => {
+    reiniciarJuego()
+})
+
+const reiniciarJuego = () => {
     if (!juegoEmpezado) {
         juegoEmpezado = true;
         btnComenzar.textContent = "REINICIAR";
@@ -96,7 +100,7 @@ btnComenzar.addEventListener("click", () => {
 
     btnPausa.toggleAttribute("hidden")
     btnComenzar.classList.toggle("reiniciar")
-})
+}
 
 //Manejador del evento click en el boton de play/pausa
 btnPausa.addEventListener("click", () => {
@@ -209,7 +213,7 @@ function cargarJuego() {
 
 //Efecto el seleccionar un número
 function seleccionarNumero() {
-    if (juegoEmpezado && !pausado && casillaSelecionada && !arrNumerosTerminados.includes(this)) {
+    if (juegoEmpezado && !pausado && casillaSelecionada && !arrNumerosTerminados.includes(this) && !casillaSelec.classList.contains("encontrado")) {
         numSeleccionado = this
         casillaSelec.innerHTML = numSeleccionado.id
         seleccionarCasilla(casillaSelec)
@@ -240,14 +244,13 @@ function seleccionarCasilla(a) {
             numeroCompleto(numSeleccionado.id)
         }
         else {
-
-            //Si erra y no es el mismo numero que está puesto entramos aca
-            if (!(a.classList.contains("encontrado"))) {
-
-                //Cambiamos el numero en pantalla
-                a.innerText = numSeleccionado.id
-                //Sumamos errores y lo mostramos
-                contErrores++
+            //Cambiamos el numero en pantalla
+            a.innerText = numSeleccionado.id
+            //Sumamos errores y lo mostramos
+            contErrores++
+            if (contErrores == 3) {
+                reiniciarJuego()
+            } else {
                 textoErrores.innerText = contErrores;
                 //Efecto de error
                 a.classList.add("numErroneo")
@@ -354,7 +357,6 @@ const marcarNumero = (a) => {
 
                 elem.classList.remove('filaColumnaNumSeleccionado')
                 elem.classList.remove('casillaNumSeleccionado')
-                elem.classList.remove('casillaNumOcupado')
 
                 let b = elem.id.split('-')
                 let ab = a.id.split('-')
@@ -367,11 +369,10 @@ const marcarNumero = (a) => {
                     } else if (b[1] == ab[1] && b[0] != ab[0]) {
                         elem.classList.add('filaColumnaNumSeleccionado')
                     }
-
                     a.classList.add('casillaNumSeleccionado')
                 }
-                else if (elem.innerHTML == a.innerHTML && !a.classList.contains("numErroneo")) {
-                        elem.classList.add('casillaNumOcupado')
+                else if (elem.innerHTML == a.innerHTML && !elem.classList.contains("numErroneo")) {
+                    elem.classList.add('casillaNumSeleccionado')
                 }
             }
         }
