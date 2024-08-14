@@ -5,11 +5,13 @@ const btnFacil = document.querySelector(".btn-facil");
 const btnMedio = document.querySelector(".btn-medio");
 const btnDificil = document.querySelector(".btn-dificil");
 const btnComenzar = document.getElementById('btnComenzar');
-const divStatus = document.getElementById('status');
 const textoTiempo = document.getElementById("tiempo");
 const textoErrores = document.getElementById("errores");
 const btnPausa = document.getElementById('btnPausa');
 const contenedorTablero = document.getElementById("contenedor-tablero")
+const btnBorrar = document.createElement("button");
+const contenedorNumeros = document.getElementById("numeros")
+
 
 let numSeleccionado = null
 let juegoEmpezado = false;
@@ -86,8 +88,8 @@ const reiniciarJuego = () => {
         juegoEmpezado = true;
         btnComenzar.textContent = "REINICIAR";
 
-        if (btnPausa.classList.contains("reanudar")) {
-            btnPausa.classList.remove("reanudar")
+        if (btnPausa.classList.contains("btnReanudar")) {
+            btnPausa.classList.remove("btnReanudar")
             pausado = false
         }
 
@@ -97,11 +99,7 @@ const reiniciarJuego = () => {
         juegoEmpezado = false;
         btnComenzar.textContent = "COMENZAR JUEGO";
 
-        if (numSeleccionado != null) {
-            numSeleccionado.classList.remove("numero-seleccionado")
-        }
         seleccionarTablero(dificultad, indice)
-
         stop();
     }
 
@@ -111,7 +109,7 @@ const reiniciarJuego = () => {
 
 //Manejador del evento click en el boton de play/pausa
 btnPausa.addEventListener("click", () => {
-    btnPausa.classList.toggle("reanudar")
+    btnPausa.classList.toggle("btnReanudar")
     pausado = !pausado;
 
     pause();
@@ -172,18 +170,16 @@ contenedorTablero.addEventListener('mousedown', () => {
 
 const eventoCasilla = () => {
     cas.forEach(casilla => {
-        casilla.classList.remove('casillaNumSeleccionado')
-        casilla.classList.remove('filaColumnaNumSeleccionado')
+        casilla.classList.remove('casillaSeleccionada')
+        casilla.classList.remove('filaColumnaSeleccionada')
 
         casilla.addEventListener('mouseup', () => {
             casillaSelecionada = true
             casillaSelec = casilla
-            marcarNumero(casillaSelec)
+            marcarNumero()
         })
     })
 }
-
-
 
 
 
@@ -192,11 +188,18 @@ window.onload = function () {
     cargarJuego()
 }
 
+
 //Cargar tablero de juego
 function cargarJuego() {
+
+    btnBorrar.innerHTML = "Borrar"
+    btnBorrar.id = "btnBorrar"
+    btnBorrar.classList.add("btn-borrar");
+    contenedorNumeros.appendChild(btnBorrar)
+
     //creando los números que manejan el juego
     for (let i = 1; i <= 9; i++) {
-        let numero = document.createElement("div");
+        let numero = document.createElement("button");
         numero.id = i;
         numero.innerText = i;
 
@@ -205,7 +208,7 @@ function cargarJuego() {
 
         numero.classList.add("numero");
         numero.classList.add("num-en-uso")
-        document.getElementById("numeros").appendChild(numero)
+        contenedorNumeros.appendChild(numero)
     }
 
     //Llamado a función que dibuja el tablero
@@ -218,48 +221,52 @@ function cargarJuego() {
 
 //Efecto el seleccionar un número
 function seleccionarNumero() {
-    if (juegoEmpezado && !pausado && casillaSelecionada && !arrNumerosTerminados.includes(this) && !casillaSelec.classList.contains("encontrado") && !casillaSelec.classList.contains("casilla-inicial")) {
+    if (juegoEmpezado && !pausado && casillaSelecionada && casillaSelec && !arrNumerosTerminados.includes(this) && !casillaSelec.classList.contains("numEncontrado") && !casillaSelec.classList.contains("casilla-inicial")) {
         numSeleccionado = this
-        casillaSelec.innerHTML = numSeleccionado.id
-        seleccionarCasilla(casillaSelec)
+        seleccionarCasilla()
     }
 }
 
 
 //Efecto al seleccionar una casilla
-function seleccionarCasilla(a) {
+function seleccionarCasilla() {
     //Armamos las coordenadas de la casilla
-    let coords = a.id.split("-")
+    let coords = casillaSelec.id.split("-")
     let fila = parseInt(coords[0])
     let columna = parseInt(coords[1])
 
-    //Si el tablero no estaba escrito inicialmente entramos
+    let numAnterior = casillaSelec.innerHTML
+    casillaSelec.innerHTML = numSeleccionado.id
+    //Si el numero es correcto, entramos
     if (solucion[fila][columna] == numSeleccionado.id && !arrCasillasResueltas.includes(tablero[fila][columna])) {
 
         arrCasillasResueltas.push(solucion[fila][columna])
 
         //Lo marcamos como encontrado
-        a.classList.add("encontrado")
+        casillaSelec.classList.add("numEncontrado")
         //Si tiene le quitamos el efecto de fallo
-        if (a.classList.contains("numErroneo")) a.classList.remove("numErroneo")
+        if (casillaSelec.classList.contains("numErroneo")) casillaSelec.classList.remove("numErroneo")
 
         numeroCompleto(numSeleccionado.id)
     }
     else {
-        //Cambiamos el numero en pantalla
-        a.innerText = numSeleccionado.id
-        //Sumamos errores y lo mostramos
-        contErrores++
-        if (contErrores == 3) {
-            reiniciarJuego()
-        } else {
-            textoErrores.innerText = contErrores;
-            //Efecto de error
-            a.classList.add("numErroneo")
+
+        if(numAnterior != numSeleccionado.id){
+            //Sumamos errores y lo mostramos
+            contErrores++
+            if (contErrores == 3) {
+                reiniciarJuego()
+            } else {
+                textoErrores.innerText = contErrores;
+                //Efecto de error
+                casillaSelec.classList.add("numErroneo")
+            }
         }
     }
-    marcarNumero(casillaSelec)
 
+    
+
+    marcarNumero()
 }
 
 
@@ -273,7 +280,6 @@ function numeroCompleto(num) {
             contApariciones++
         }
     }
-    console.log(arrCasillasResueltas)
     if (contApariciones == 9) {
         numSeleccionado.classList.add("numTerminado")
         numSeleccionado.classList.remove("num-en-uso")
@@ -340,7 +346,7 @@ const calcularTiempo = (tiempoActual) => {
 
 
 //Marcar las casillas que contengan el numero seleccionado
-const marcarNumero = (a) => {
+const marcarNumero = () => {
     if (juegoEmpezado && !pausado) {
 
         for (let f = 0; f < 9; f++) {
@@ -348,26 +354,37 @@ const marcarNumero = (a) => {
 
                 let elem = document.getElementById(`${f}-${c}`)
 
-                elem.classList.remove('filaColumnaNumSeleccionado')
-                elem.classList.remove('casillaNumSeleccionado')
+                elem.classList.remove('filaColumnaSeleccionada')
+                elem.classList.remove('casillaSeleccionada')
 
                 let b = elem.id.split('-')
-                let ab = a.id.split('-')
+                let ab = casillaSelec.id.split('-')
 
 
-                if (a.innerHTML == '' && !elem.classList.contains("numErroneo")) {
+                if (casillaSelec.innerHTML == '' && !elem.classList.contains("numErroneo")) {
 
                     if (b[0] == ab[0] && b[1] != ab[1]) {
-                        elem.classList.add('filaColumnaNumSeleccionado')
+                        elem.classList.add('filaColumnaSeleccionada')
                     } else if (b[1] == ab[1] && b[0] != ab[0]) {
-                        elem.classList.add('filaColumnaNumSeleccionado')
+                        elem.classList.add('filaColumnaSeleccionada')
                     }
-                    a.classList.add('casillaNumSeleccionado')
+                    casillaSelec.classList.add('casillaSeleccionada')
                 }
-                else if (elem.innerHTML == a.innerHTML && !elem.classList.contains("numErroneo")) {
-                    elem.classList.add('casillaNumSeleccionado')
+                else if (elem.innerHTML == casillaSelec.innerHTML && !elem.classList.contains("numErroneo")) {
+                    elem.classList.add('casillaSeleccionada')
                 }
             }
         }
     }
 }
+
+
+// const btnBorrar = document.getElementById("btn-borrar")
+
+btnBorrar.addEventListener("click", () => {
+    if (casillaSelec != null && casillaSelec.classList.contains("numErroneo")) {
+        casillaSelec.classList.remove("numErroneo")
+        casillaSelec.innerText = ''
+        casillaSelec = null
+    }
+})

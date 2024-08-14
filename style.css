@@ -50,13 +50,24 @@ p{
     padding-left: 10px;
 }
 
-#errores{
-    width: 30px;
-    padding-right: 10px;
-    margin-left: 300px;
-    text-align: start;
-    color: rgb(212, 80, 109);
+.btn-pausar{
+    position: absolute;
+    left: -11px;
+    top: 27px;
+    height: 12px;
+    border-style: double;
+    border-width: 0 0 0 12px;
+    cursor: pointer;
+    margin-left: 15px;
+    border-color: transparent transparent transparent rgb(212, 80, 109);
+    background-color: transparent;
 }
+
+.btnReanudar{
+    border-width: 6px 0 6px 12px;
+    border-style: solid;
+}
+
 
 .btn-comenzar{
     position: absolute;
@@ -87,6 +98,14 @@ p{
     background-color: #113e5e;
     border: 2px solid rgb(32, 93, 143);
     color: rgb(230, 235, 241);
+}
+
+#errores{
+    width: 30px;
+    padding-right: 10px;
+    margin-left: 300px;
+    text-align: start;
+    color: rgb(212, 80, 109);
 }
 
 #contenedor-tablero{
@@ -129,15 +148,50 @@ p{
     background-color: rgb(174, 207, 235);
 }
 
+.casilla-inicial{
+    background-color: rgb(243, 235, 235);
+}
+
+.casillaSeleccionada{
+    background-color: #3b9c5b;
+    border: 0;
+}
+
+.casillaSeleccionada:hover{
+    background-color: #5dc07e;
+}
+
+.filaColumnaSeleccionada{
+    background-color: rgb(197, 226, 199);
+    
+    border: 1px solid rgb(162, 162, 180);
+}
+
+.filaColumnaSeleccionada:hover{
+    background-color: rgb(164, 218, 166);
+}
+
+.linea-vertical{
+    border-right: 2px solid black !important;
+}
+
+.linea-horizontal{
+    border-bottom: 2px solid black !important;
+}
+
 
 #numeros{
     max-width: 450px;
-
 
     margin: 0 auto;
     display: flex;
     flex-wrap: wrap;
 
+}
+
+.btn-borrar{
+    background-color: orange;
+    border: none;
 }
 
 .numero{
@@ -163,23 +217,8 @@ p{
     border-radius: 35%;
 }
 
-.numero-seleccionado{
-    background-color: gray;
-}
 
-.casilla-inicial{
-    background-color: rgb(243, 235, 235);
-}
-
-.linea-vertical{
-    border-right: 2px solid black !important;
-}
-
-.linea-horizontal{
-    border-bottom: 2px solid black !important;
-}
-
-.encontrado{
+.numEncontrado{
     color: #08491d;
 }
 
@@ -199,43 +238,6 @@ p{
 }
 
 
-.btn-pausar{
-    position: absolute;
-    left: -11px;
-    top: 27px;
-    height: 12px;
-    border-style: double;
-    border-width: 0 0 0 12px;
-    cursor: pointer;
-    margin-left: 15px;
-    border-color: transparent transparent transparent rgb(212, 80, 109);
-    background-color: transparent;
-}
-
-.reanudar{
-    border-width: 6px 0 6px 12px;
-    border-style: solid;
-}
-
-.casillaNumSeleccionado{
-    background-color: #3b9c5b;
-    border: 0;
-}
-
-
-.casillaNumSeleccionado:hover{
-    background-color: #5dc07e;
-}
-
-.filaColumnaNumSeleccionado{
-    background-color: rgb(197, 226, 199);
-    
-    border: 1px solid rgb(162, 162, 180);
-}
-
-.filaColumnaNumSeleccionado:hover{
-    background-color: rgb(164, 218, 166);
-}
 
 
 @media (max-width: 500px) {
@@ -260,6 +262,11 @@ p{
     p{
         font-size: 20px;
         line-height: 25px;
+    }
+
+    .btn-pausar{
+        left: 68px;
+        top: 29.5px;
     }
     
     #errores{
@@ -293,10 +300,6 @@ p{
         font-size: 1em;
     }
 
-    .btn-pausar{
-        left: 68px;
-        top: 29.5px;
-    }
 }
 
 @media (max-width: 405px) {
@@ -314,6 +317,11 @@ p{
         line-height: 20px;
     }
     
+    .btn-pausar{
+        left: 47px;
+        top: 29.5px;
+    }
+
     #errores{
         font-size: 25px;
     }
@@ -341,8 +349,4 @@ p{
         flex-grow: 1;
     }
 
-    .btn-pausar{
-        left: 47px;
-        top: 29.5px;
-    }
 }
