@@ -171,6 +171,7 @@ p{
     background-color: rgb(164, 218, 166);
 }
 
+
 .linea-vertical{
     border-right: 2px solid black !important;
 }
@@ -217,14 +218,22 @@ p{
     border-radius: 35%;
 }
 
-
 .numEncontrado{
     color: #08491d;
 }
 
 .numErroneo{
-    background-color: rgb(241, 206, 206);
-    border: 1px solid rgb(184, 149, 149);
+    background-color: rgb(247, 120, 128);
+    border: 1px solid rgb(209, 158, 158);
+}
+
+.numErroneo2{
+    background-color: rgb(221, 207, 238);
+    border: 1px solid rgba(209, 158, 158, 0.966);
+}
+
+.filaColumnaErrada{
+    background-color: rgb(245, 201, 208);
 }
 
 .numErroneo:hover{

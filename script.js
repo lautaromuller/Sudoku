@@ -33,9 +33,15 @@ let contDificil = 0;
 let dificultad = "facil";
 let indice = 0;
 
+//Arrays para ordenar casillas
+let arrCasillas = []
+let casillaSelecionada = false
+let casillaSelec;
+
 //Arrays para deshabilitar los numeros ya encontrados
 let arrCasillasResueltas = []
 let arrNumerosTerminados = []
+
 
 
 //Manejadores de eventos de los botones de dificultad
@@ -83,10 +89,26 @@ btnComenzar.addEventListener("click", () => {
     reiniciarJuego()
 })
 
+//Manejador del evento click en el boton de play/pausa
+btnPausa.addEventListener("click", () => {
+    btnPausa.classList.toggle("btnReanudar")
+    pausado = !pausado;
+
+    pause();
+})
+
+btnBorrar.addEventListener("click", () => {
+    if (casillaSelec != null && casillaSelec.classList.contains("numErroneo")) {
+        casillaSelec.classList.remove("numErroneo")
+        casillaSelec.innerText = ''
+        casillaSelec = null
+    }
+})
+
 const reiniciarJuego = () => {
     if (!juegoEmpezado) {
         juegoEmpezado = true;
-        btnComenzar.textContent = "REINICIAR";
+        btnComenzar.textContent = "TERMINAR JUEGO";
 
         if (btnPausa.classList.contains("btnReanudar")) {
             btnPausa.classList.remove("btnReanudar")
@@ -107,13 +129,6 @@ const reiniciarJuego = () => {
     btnComenzar.classList.toggle("reiniciar")
 }
 
-//Manejador del evento click en el boton de play/pausa
-btnPausa.addEventListener("click", () => {
-    btnPausa.classList.toggle("btnReanudar")
-    pausado = !pausado;
-
-    pause();
-})
 
 
 //Función que cambia el tablero según el boton seleccionado
@@ -130,9 +145,19 @@ function seleccionarTablero(nivel, indice) {
     crearTablero()
 }
 
-let cas = []
+
 //Función que dibuja el tablero
 function crearTablero() {
+    let c1 = []
+    let c2 = []
+    let c3 = []
+    let c4 = []
+    let c5 = []
+    let c6 = []
+    let c7 = []
+    let c8 = []
+    let c9 = []
+
     for (let f = 0; f < 9; f++) {
         for (let c = 0; c < 9; c++) {
             let casilla = document.createElement("div");
@@ -156,31 +181,40 @@ function crearTablero() {
 
             casilla.classList.add("casilla")
             document.getElementById("tablero").appendChild(casilla)
-            cas.push(casilla)
+
+            casilla.addEventListener('mouseup', () => {
+                casillaSelecionada = true
+                casillaSelec = casilla
+                marcarNumero()
+            })
+
+            switch (f) {
+                case 0:
+                case 1:
+                case 2:
+                    if (c < 3) c1.push(casilla)
+                    else if (c < 6) c2.push(casilla)
+                    else c3.push(casilla)
+                    break
+                case 3:
+                case 4:
+                case 5:
+                    if (c < 3) c4.push(casilla)
+                    else if (c < 6) c5.push(casilla)
+                    else c6.push(casilla)
+                    break
+                case 6:
+                case 7:
+                case 8:
+                    if (c < 3) c7.push(casilla)
+                    else if (c < 6) c8.push(casilla)
+                    else c9.push(casilla)
+                    break
+            }
         }
     }
+    arrCasillas.push(c1, c2, c3, c4, c5, c6, c7, c8, c9)
 }
-
-let casillaSelecionada = false
-let casillaSelec;
-
-contenedorTablero.addEventListener('mousedown', () => {
-    eventoCasilla()
-})
-
-const eventoCasilla = () => {
-    cas.forEach(casilla => {
-        casilla.classList.remove('casillaSeleccionada')
-        casilla.classList.remove('filaColumnaSeleccionada')
-
-        casilla.addEventListener('mouseup', () => {
-            casillaSelecionada = true
-            casillaSelec = casilla
-            marcarNumero()
-        })
-    })
-}
-
 
 
 //Carga del primer tablero al iniciar la página
@@ -216,9 +250,6 @@ function cargarJuego() {
 }
 
 
-
-
-
 //Efecto el seleccionar un número
 function seleccionarNumero() {
     if (juegoEmpezado && !pausado && casillaSelecionada && casillaSelec && !arrNumerosTerminados.includes(this) && !casillaSelec.classList.contains("numEncontrado") && !casillaSelec.classList.contains("casilla-inicial")) {
@@ -230,6 +261,7 @@ function seleccionarNumero() {
 
 //Efecto al seleccionar una casilla
 function seleccionarCasilla() {
+
     //Armamos las coordenadas de la casilla
     let coords = casillaSelec.id.split("-")
     let fila = parseInt(coords[0])
@@ -251,7 +283,7 @@ function seleccionarCasilla() {
     }
     else {
 
-        if(numAnterior != numSeleccionado.id){
+        if (numAnterior != numSeleccionado.id) {
             //Sumamos errores y lo mostramos
             contErrores++
             if (contErrores == 3) {
@@ -263,9 +295,6 @@ function seleccionarCasilla() {
             }
         }
     }
-
-    
-
     marcarNumero()
 }
 
@@ -302,7 +331,6 @@ const reiniciarContadores = () => {
     arrCasillasResueltas = []
     casillaSelec = null
     casillaSelecionada = false
-    eventoCasilla()
 }
 
 
@@ -348,6 +376,14 @@ const calcularTiempo = (tiempoActual) => {
 //Marcar las casillas que contengan el numero seleccionado
 const marcarNumero = () => {
     if (juegoEmpezado && !pausado) {
+        let indexCuadro;
+
+        arrCasillas.forEach((arr, index) => {
+            if (arr.includes(casillaSelec)) {
+                indexCuadro = index
+            }
+        })
+
 
         for (let f = 0; f < 9; f++) {
             for (let c = 0; c < 9; c++) {
@@ -355,36 +391,55 @@ const marcarNumero = () => {
                 let elem = document.getElementById(`${f}-${c}`)
 
                 elem.classList.remove('filaColumnaSeleccionada')
+                elem.classList.remove('filaColumnaErrada')
                 elem.classList.remove('casillaSeleccionada')
+                elem.classList.remove('numErroneo2')
 
-                let b = elem.id.split('-')
-                let ab = casillaSelec.id.split('-')
+                let elemId = elem.id.split('-')
+                let casSeleccionadaId = casillaSelec.id.split('-')
 
 
-                if (casillaSelec.innerHTML == '' && !elem.classList.contains("numErroneo")) {
+                if (casillaSelec.innerHTML == '') {
 
-                    if (b[0] == ab[0] && b[1] != ab[1]) {
-                        elem.classList.add('filaColumnaSeleccionada')
-                    } else if (b[1] == ab[1] && b[0] != ab[0]) {
+                    arrCasillas[indexCuadro].forEach(cas => {
+                        if (cas.id != casillaSelec.id) {
+                            cas.classList.add('filaColumnaSeleccionada')
+                        }
+                    })
+
+                    if ((elemId[0] == casSeleccionadaId[0] && elemId[1] != casSeleccionadaId[1]) || (elemId[1] == casSeleccionadaId[1] && elemId[0] != casSeleccionadaId[0])) {
                         elem.classList.add('filaColumnaSeleccionada')
                     }
                     casillaSelec.classList.add('casillaSeleccionada')
                 }
-                else if (elem.innerHTML == casillaSelec.innerHTML && !elem.classList.contains("numErroneo")) {
+
+
+                else if(casillaSelec.classList.contains("numErroneo")){
+
+                    arrCasillas[indexCuadro].forEach(cas => {
+                        if (cas.innerHTML == casillaSelec.innerHTML && cas.id != casillaSelec.id){
+                            cas.classList.add('numErroneo2')
+                        }
+                        else if (cas.innerHTML != casillaSelec.innerHTML) {
+                            cas.classList.add('filaColumnaErrada')
+                        }
+                    })
+
+                    if ((elemId[0] == casSeleccionadaId[0] && elemId[1] != casSeleccionadaId[1]) || (elemId[1] == casSeleccionadaId[1] && elemId[0] != casSeleccionadaId[0])){
+                        if (elem.innerHTML == casillaSelec.innerHTML){
+                            elem.classList.add('numErroneo2')
+                        }
+                        else{
+                            elem.classList.add('filaColumnaErrada')
+                        }
+                    }
+                }
+
+
+                else if (elem.innerHTML == casillaSelec.innerHTML){
                     elem.classList.add('casillaSeleccionada')
                 }
             }
         }
     }
 }
-
-
-// const btnBorrar = document.getElementById("btn-borrar")
-
-btnBorrar.addEventListener("click", () => {
-    if (casillaSelec != null && casillaSelec.classList.contains("numErroneo")) {
-        casillaSelec.classList.remove("numErroneo")
-        casillaSelec.innerText = ''
-        casillaSelec = null
-    }
-})
