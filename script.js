@@ -43,44 +43,70 @@ let arrCasillasResueltas = []
 let arrNumerosTerminados = []
 
 
-
 //Manejadores de eventos de los botones de dificultad
 btnFacil.addEventListener("click", () => {
     if (!juegoEmpezado) {
-        contFacil += 1;
-        if (contFacil > 9) contFacil = 0
-        //Cambiamos texto del boton
-        btnFacil.innerHTML = `Facil ${contFacil + 1}/10`
-        //Llamamos a la funcion que trae el tablero
-        dificultad = "facil"
-        indice = contFacil
+        if (dificultad == 'facil') {
+
+            contFacil += 1;
+            if (contFacil > 9) contFacil = 0
+
+            //Cambiamos texto del boton
+            btnFacil.innerHTML = `Facil ${contFacil + 1}/10`
+            //Llamamos a la funcion que trae el tablero
+            indice = contFacil
+            //Reiniciamos e iniciamos los valores necesarios
+            reiniciarContadores();
+        }
+        else {
+            btnMedio.classList.remove('btn-dificultad-actual')
+            btnDificil.classList.remove('btn-dificultad-actual')
+            dificultad = "facil"
+            btnFacil.classList.add('btn-dificultad-actual')
+        }
         seleccionarTablero("facil", contFacil)
-        //Reiniciamos e iniciamos los valores necesarios
-        reiniciarContadores();
     }
 })
 
 btnMedio.addEventListener("click", () => {
     if (!juegoEmpezado) {
-        contMedio += 1;
-        if (contMedio > 9) contMedio = 0
-        btnMedio.innerHTML = `Medio ${contMedio + 1}/10`
-        dificultad = "medio"
-        indice = contMedio
+        if (dificultad == 'medio') {
+
+            contMedio += 1;
+            if (contMedio > 9) contMedio = 0
+
+            btnMedio.innerHTML = `Medio ${contMedio + 1}/10`
+            indice = contMedio
+            reiniciarContadores();
+        }
+        else {
+            btnFacil.classList.remove('btn-dificultad-actual')
+            btnDificil.classList.remove('btn-dificultad-actual')
+            dificultad = "medio"
+            btnMedio.classList.add('btn-dificultad-actual')
+        }
         seleccionarTablero("medio", contMedio)
-        reiniciarContadores();
     }
 })
 
 btnDificil.addEventListener("click", () => {
     if (!juegoEmpezado) {
-        contDificil += 1;
-        if (contDificil > 9) contDificil = 0
-        btnDificil.innerHTML = `Dificil ${contDificil + 1}/10`
-        dificultad = "dificil"
-        indice = contDificil
+        if (dificultad == 'dificil') {
+
+            contDificil += 1;
+            if (contDificil > 9) contDificil = 0
+
+            btnDificil.innerHTML = `Dificil ${contDificil + 1}/10`
+            indice = contDificil
+            reiniciarContadores();
+        }
+        else {
+            btnFacil.classList.remove('btn-dificultad-actual')
+            btnMedio.classList.remove('btn-dificultad-actual')
+            dificultad = "dificil"
+            btnDificil.classList.add('btn-dificultad-actual')
+        }
         seleccionarTablero("dificil", contDificil)
-        reiniciarContadores();
     }
 })
 
@@ -91,29 +117,28 @@ btnComenzar.addEventListener("click", () => {
 
 //Manejador del evento click en el boton de play/pausa
 btnPausa.addEventListener("click", () => {
-    btnPausa.classList.toggle("btnReanudar")
+    btnPausa.classList.toggle("btn-reanudar")
     pausado = !pausado;
 
     pause();
 })
 
 btnBorrar.addEventListener("click", () => {
-    if (casillaSelec != null && casillaSelec.classList.contains("numErroneo")) {
-        casillaSelec.classList.remove("numErroneo")
+    if (casillaSelec != null && casillaSelec.classList.contains("num-erroneo")) {
+        casillaSelec.classList.remove("num-erroneo")
         casillaSelec.innerText = ''
         casillaSelec = null
     }
 })
 
 const reiniciarJuego = () => {
+
     if (!juegoEmpezado) {
         juegoEmpezado = true;
         btnComenzar.textContent = "TERMINAR JUEGO";
 
-        if (btnPausa.classList.contains("btnReanudar")) {
-            btnPausa.classList.remove("btnReanudar")
-            pausado = false
-        }
+        btnPausa.classList.remove("btn-reanudar")
+        pausado = false
 
         start();
     }
@@ -252,7 +277,7 @@ function cargarJuego() {
 
 //Efecto el seleccionar un número
 function seleccionarNumero() {
-    if (juegoEmpezado && !pausado && casillaSelecionada && casillaSelec && !arrNumerosTerminados.includes(this) && !casillaSelec.classList.contains("numEncontrado") && !casillaSelec.classList.contains("casilla-inicial")) {
+    if (juegoEmpezado && !pausado && casillaSelecionada && casillaSelec && !arrNumerosTerminados.includes(this) && !casillaSelec.classList.contains("num-encontrado") && !casillaSelec.classList.contains("casilla-inicial")) {
         numSeleccionado = this
         seleccionarCasilla()
     }
@@ -275,9 +300,9 @@ function seleccionarCasilla() {
         arrCasillasResueltas.push(solucion[fila][columna])
 
         //Lo marcamos como encontrado
-        casillaSelec.classList.add("numEncontrado")
+        casillaSelec.classList.add("num-encontrado")
         //Si tiene le quitamos el efecto de fallo
-        if (casillaSelec.classList.contains("numErroneo")) casillaSelec.classList.remove("numErroneo")
+        if (casillaSelec.classList.contains("num-erroneo")) casillaSelec.classList.remove("num-erroneo")
 
         numeroCompleto(numSeleccionado.id)
     }
@@ -291,7 +316,7 @@ function seleccionarCasilla() {
             } else {
                 textoErrores.innerText = contErrores;
                 //Efecto de error
-                casillaSelec.classList.add("numErroneo")
+                casillaSelec.classList.add("num-erroneo")
             }
         }
     }
@@ -310,7 +335,7 @@ function numeroCompleto(num) {
         }
     }
     if (contApariciones == 9) {
-        numSeleccionado.classList.add("numTerminado")
+        numSeleccionado.classList.add("num-terminado")
         numSeleccionado.classList.remove("num-en-uso")
         arrNumerosTerminados.push(numSeleccionado)
         numSeleccionado = null
@@ -321,7 +346,7 @@ function numeroCompleto(num) {
 //Esta función reinicia contadores
 const reiniciarContadores = () => {
     arrNumerosTerminados.forEach(e => {
-        e.classList.remove("numTerminado")
+        e.classList.remove("num-terminado")
         e.classList.add("num-en-uso")
     })
 
@@ -390,10 +415,12 @@ const marcarNumero = () => {
 
                 let elem = document.getElementById(`${f}-${c}`)
 
-                elem.classList.remove('filaColumnaSeleccionada')
-                elem.classList.remove('filaColumnaErrada')
-                elem.classList.remove('casillaSeleccionada')
-                elem.classList.remove('numErroneo2')
+                elem.classList.remove('fila-col-activa')
+                elem.classList.remove('fila-col-errada')
+                elem.classList.remove('casilla-seleccionada')
+                elem.classList.remove('num-igual-erroneo')
+                elem.classList.remove('casilla-erronea-seleccionada')
+
 
                 let elemId = elem.id.split('-')
                 let casSeleccionadaId = casillaSelec.id.split('-')
@@ -403,41 +430,47 @@ const marcarNumero = () => {
 
                     arrCasillas[indexCuadro].forEach(cas => {
                         if (cas.id != casillaSelec.id) {
-                            cas.classList.add('filaColumnaSeleccionada')
+                            cas.classList.add('fila-col-activa')
                         }
                     })
 
                     if ((elemId[0] == casSeleccionadaId[0] && elemId[1] != casSeleccionadaId[1]) || (elemId[1] == casSeleccionadaId[1] && elemId[0] != casSeleccionadaId[0])) {
-                        elem.classList.add('filaColumnaSeleccionada')
+                        elem.classList.add('fila-col-activa')
                     }
-                    casillaSelec.classList.add('casillaSeleccionada')
+                    casillaSelec.classList.add('casilla-seleccionada')
                 }
 
 
-                else if(casillaSelec.classList.contains("numErroneo")){
+                else if (casillaSelec.classList.contains("num-erroneo")) {
 
                     arrCasillas[indexCuadro].forEach(cas => {
-                        if (cas.innerHTML == casillaSelec.innerHTML && cas.id != casillaSelec.id){
-                            cas.classList.add('numErroneo2')
+                        if (cas.innerHTML == casillaSelec.innerHTML && cas.id != casillaSelec.id) {
+                            cas.classList.add('num-igual-erroneo')
                         }
                         else if (cas.innerHTML != casillaSelec.innerHTML) {
-                            cas.classList.add('filaColumnaErrada')
+                            cas.classList.add('fila-col-errada')
                         }
                     })
 
-                    if ((elemId[0] == casSeleccionadaId[0] && elemId[1] != casSeleccionadaId[1]) || (elemId[1] == casSeleccionadaId[1] && elemId[0] != casSeleccionadaId[0])){
-                        if (elem.innerHTML == casillaSelec.innerHTML){
-                            elem.classList.add('numErroneo2')
+                    if ((elemId[0] == casSeleccionadaId[0] && elemId[1] != casSeleccionadaId[1]) || (elemId[1] == casSeleccionadaId[1] && elemId[0] != casSeleccionadaId[0])) {
+                        if (elem.innerHTML == casillaSelec.innerHTML) {
+                            elem.classList.add('num-igual-erroneo')
                         }
-                        else{
-                            elem.classList.add('filaColumnaErrada')
+                        else {
+                            elem.classList.add('fila-col-errada')
                         }
                     }
+                    casillaSelec.classList.add('casilla-erronea-seleccionada')
                 }
 
 
-                else if (elem.innerHTML == casillaSelec.innerHTML){
-                    elem.classList.add('casillaSeleccionada')
+                else if (elem.innerHTML == casillaSelec.innerHTML) {
+                    if (elem.classList.contains('num-erroneo')) {
+                        elem.classList.add('casilla-erronea-seleccionada')
+                    }
+                    else {
+                        elem.classList.add('casilla-seleccionada')
+                    }
                 }
             }
         }
