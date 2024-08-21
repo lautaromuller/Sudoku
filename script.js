@@ -41,6 +41,7 @@ let casillaSelec;
 //Arrays para deshabilitar los numeros ya encontrados
 let arrCasillasResueltas = []
 let arrNumerosTerminados = []
+let numColocado = false
 
 
 //Manejadores de eventos de los botones de dificultad
@@ -131,7 +132,7 @@ btnBorrar.addEventListener("click", () => {
     }
 })
 
-const reiniciarJuego = () => {
+function reiniciarJuego(){
 
     if (!juegoEmpezado) {
         juegoEmpezado = true;
@@ -154,8 +155,6 @@ const reiniciarJuego = () => {
     btnComenzar.classList.toggle("reiniciar")
 }
 
-
-
 //Función que cambia el tablero según el boton seleccionado
 function seleccionarTablero(nivel, indice) {
     tablero = data[nivel][indice].tablero
@@ -169,7 +168,6 @@ function seleccionarTablero(nivel, indice) {
     reiniciarContadores()
     crearTablero()
 }
-
 
 //Función que dibuja el tablero
 function crearTablero() {
@@ -241,12 +239,10 @@ function crearTablero() {
     arrCasillas.push(c1, c2, c3, c4, c5, c6, c7, c8, c9)
 }
 
-
 //Carga del primer tablero al iniciar la página
 window.onload = function () {
     cargarJuego()
 }
-
 
 //Cargar tablero de juego
 function cargarJuego() {
@@ -274,15 +270,13 @@ function cargarJuego() {
     crearTablero()
 }
 
-
 //Efecto el seleccionar un número
-function seleccionarNumero() {
+function seleccionarNumero(){
     if (juegoEmpezado && !pausado && casillaSelecionada && casillaSelec && !arrNumerosTerminados.includes(this) && !casillaSelec.classList.contains("num-encontrado") && !casillaSelec.classList.contains("casilla-inicial")) {
         numSeleccionado = this
         seleccionarCasilla()
     }
 }
-
 
 //Efecto al seleccionar una casilla
 function seleccionarCasilla() {
@@ -303,7 +297,7 @@ function seleccionarCasilla() {
         casillaSelec.classList.add("num-encontrado")
         //Si tiene le quitamos el efecto de fallo
         if (casillaSelec.classList.contains("num-erroneo")) casillaSelec.classList.remove("num-erroneo")
-
+        numColocado = true
         numeroCompleto(numSeleccionado.id)
     }
     else {
@@ -323,10 +317,8 @@ function seleccionarCasilla() {
     marcarNumero()
 }
 
-
-
 //Función para manejar el efecto cuando un número fue completado
-function numeroCompleto(num) {
+const numeroCompleto = (num) => {
     let contApariciones = 0
     //Bloqueamos el numero porque ya no hay más
     for (let i = 0; i < arrCasillasResueltas.length; i++) {
@@ -341,7 +333,6 @@ function numeroCompleto(num) {
         numSeleccionado = null
     }
 }
-
 
 //Esta función reinicia contadores
 const reiniciarContadores = () => {
@@ -358,7 +349,6 @@ const reiniciarContadores = () => {
     casillaSelecionada = false
 }
 
-
 //Función que reinicia el tiempo de juego
 const stop = () => {
     tiempoActual = 0;
@@ -368,10 +358,8 @@ const stop = () => {
 //Función que maneja la pausa del tiempo de juego
 const pause = () => {
     if (pausado) {
-        // btnPausa.textContent = "REANUDAR";
         clearInterval(intervalTiempo)
     } else {
-        // btnPausa.textContent = "PAUSAR";
         start();
     }
 
@@ -386,7 +374,7 @@ const start = () => {
 }
 
 //Función que retorna el tiempo actual en minutos y segundos
-const calcularTiempo = (tiempoActual) => {
+function calcularTiempo(tiempoActual){
     const segundos = Math.floor(tiempoActual / 1000)
     const minutos = Math.floor(segundos / 60)
 
@@ -396,83 +384,153 @@ const calcularTiempo = (tiempoActual) => {
     return `${msjMinutos}:${msjSegundos}`
 }
 
-
-
 //Marcar las casillas que contengan el numero seleccionado
-const marcarNumero = () => {
+function marcarNumero(){
     if (juegoEmpezado && !pausado) {
-        let indexCuadro;
+        borrarCasillasSeleccionadas()
+        if (casillaSelec != null) {
 
-        arrCasillas.forEach((arr, index) => {
-            if (arr.includes(casillaSelec)) {
-                indexCuadro = index
-            }
-        })
-
-
-        for (let f = 0; f < 9; f++) {
-            for (let c = 0; c < 9; c++) {
-
-                let elem = document.getElementById(`${f}-${c}`)
-
-                elem.classList.remove('fila-col-activa')
-                elem.classList.remove('fila-col-errada')
-                elem.classList.remove('casilla-seleccionada')
-                elem.classList.remove('num-igual-erroneo')
-                elem.classList.remove('casilla-erronea-seleccionada')
-
-
-                let elemId = elem.id.split('-')
-                let casSeleccionadaId = casillaSelec.id.split('-')
-
-
-                if (casillaSelec.innerHTML == '') {
-
-                    arrCasillas[indexCuadro].forEach(cas => {
-                        if (cas.id != casillaSelec.id) {
-                            cas.classList.add('fila-col-activa')
-                        }
-                    })
-
-                    if ((elemId[0] == casSeleccionadaId[0] && elemId[1] != casSeleccionadaId[1]) || (elemId[1] == casSeleccionadaId[1] && elemId[0] != casSeleccionadaId[0])) {
-                        elem.classList.add('fila-col-activa')
-                    }
-                    casillaSelec.classList.add('casilla-seleccionada')
+            let indexCuadro;
+            arrCasillas.forEach((arr, index) => {
+                if (arr.includes(casillaSelec)) {
+                    indexCuadro = index
                 }
+            })
 
+            let arrCuadro = []
+            let arrColumna = []
+            let arrFila = []
 
-                else if (casillaSelec.classList.contains("num-erroneo")) {
+            for (let f = 0; f < 9; f++) {
+                for (let c = 0; c < 9; c++) {
 
-                    arrCasillas[indexCuadro].forEach(cas => {
-                        if (cas.innerHTML == casillaSelec.innerHTML && cas.id != casillaSelec.id) {
-                            cas.classList.add('num-igual-erroneo')
-                        }
-                        else if (cas.innerHTML != casillaSelec.innerHTML) {
-                            cas.classList.add('fila-col-errada')
-                        }
-                    })
+                    let elem = document.getElementById(`${f}-${c}`)
+                    let elemId = elem.id.split('-')
+                    let casSeleccionadaId = casillaSelec.id.split('-')
 
-                    if ((elemId[0] == casSeleccionadaId[0] && elemId[1] != casSeleccionadaId[1]) || (elemId[1] == casSeleccionadaId[1] && elemId[0] != casSeleccionadaId[0])) {
-                        if (elem.innerHTML == casillaSelec.innerHTML) {
-                            elem.classList.add('num-igual-erroneo')
+                    if (casillaSelec.classList.contains("num-erroneo")) {
+                        if ((elemId[0] == casSeleccionadaId[0] && elemId[1] != casSeleccionadaId[1]) || (elemId[1] == casSeleccionadaId[1] && elemId[0] != casSeleccionadaId[0])) {
+                            if (elem.innerHTML == casillaSelec.innerHTML) {
+                                elem.classList.add('num-igual-erroneo')
+                            }
+                            else {
+                                elem.classList.add('fila-col-errada')
+                            }
                         }
-                        else {
-                            elem.classList.add('fila-col-errada')
-                        }
+                        casillaSelec.classList.add('casilla-erronea-seleccionada')
                     }
-                    casillaSelec.classList.add('casilla-erronea-seleccionada')
-                }
 
-
-                else if (elem.innerHTML == casillaSelec.innerHTML) {
-                    if (elem.classList.contains('num-erroneo')) {
-                        elem.classList.add('casilla-erronea-seleccionada')
-                    }
                     else {
-                        elem.classList.add('casilla-seleccionada')
+                        if (elem.id == casillaSelec.id) {
+                            elem.classList.add('casilla-seleccionada')
+                            arrFila.push(elem)
+                            arrColumna.push(elem)
+                        }
+
+                        else if (elem.innerHTML == casillaSelec.innerHTML && elem.innerHTML != '') {
+                            if (elem.classList.contains('num-erroneo')) {
+                                elem.classList.add('casilla-erronea-seleccionada')
+                            }
+                            else {
+                                elem.classList.add('casilla-seleccionada')
+                            }
+                        }
+
+                        else if ((elemId[0] == casSeleccionadaId[0] && elemId[1] != casSeleccionadaId[1])) {
+                            elem.classList.add('fila-col-activa')
+                            arrFila.push(elem)
+                        }
+                        else if ((elemId[1] == casSeleccionadaId[1] && elemId[0] != casSeleccionadaId[0])) {
+                            elem.classList.add('fila-col-activa')
+                            arrColumna.push(elem)
+                        }
                     }
                 }
+            }
+
+            if (casillaSelec.classList.contains("num-erroneo")) {
+                arrCasillas[indexCuadro].forEach(cas => {
+
+                    if (cas.innerHTML == casillaSelec.innerHTML && cas.id != casillaSelec.id) {
+                        cas.classList.add('num-igual-erroneo')
+                    }
+                    else if (cas.innerHTML != casillaSelec.innerHTML) {
+                        cas.classList.add('fila-col-errada')
+                    }
+                })
+            }
+            else {
+                arrCasillas[indexCuadro].forEach(cas => {
+                    if (cas.id != casillaSelec.id) {
+                        cas.classList.add('fila-col-activa')
+                    }
+                    arrCuadro.push(cas)
+                })
+            }
+
+            if(numColocado){
+                efectoDeCompletado(arrCuadro, arrFila, arrColumna)
+                numColocado = !numColocado
             }
         }
     }
+}
+
+//Función que recorre todas las casillas y borra sus efectos actuales
+const borrarCasillasSeleccionadas = (soloIguales = false) => {
+    for (let f = 0; f < 9; f++) {
+        for (let c = 0; c < 9; c++) {
+
+            let elem = document.getElementById(`${f}-${c}`)
+            elem.classList.remove('casilla-seleccionada')
+            if(!soloIguales){
+
+                elem.classList.remove('fila-col-activa')
+                elem.classList.remove('fila-col-errada')
+                elem.classList.remove('num-igual-erroneo')
+                elem.classList.remove('casilla-erronea-seleccionada')
+            }
+        }
+    }
+}
+
+//Función principal para manejar el efecto de los cuadros, filas o columnas completadas
+function efectoDeCompletado(cuadro, fila, columna){
+    if (estaCompleto(cuadro)) efectoCompleto1(cuadro)
+    if (estaCompleto(fila)) efectoCompleto1(fila)
+    if (estaCompleto(columna)) efectoCompleto1(columna)
+}
+
+//Retorna true si todos los elementos del array contienen texto
+const estaCompleto = (arr) => {
+    let completado = true
+    arr.forEach(e => {
+        if (e.innerHTML == '') {
+            completado = false
+        }
+    })
+    if(completado) borrarCasillasSeleccionadas(true)
+    return completado
+}
+
+//Primera parte del efecto. Espera que la segunda parte agregue el efecto y despues lo borra
+const efectoCompleto1 = async (arr) => {
+    for (const e of arr) {
+        if(!e.classList.contains("fila-col-activa")){
+            e.classList.add("fila-col-activa")
+        }
+        await efectoCompleto2(e);
+        e.classList.remove("efecto-completo");
+    }
+    marcarNumero()
+}
+
+//Segunda parte del efecto. Agrega el efecto y espera un tiempo
+const efectoCompleto2 = e => {
+    return new Promise((resolve) => {
+        e.classList.add("efecto-completo");
+        setTimeout(() => {
+            resolve();
+        }, 80);
+    });
 }
