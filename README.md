@@ -3,6 +3,7 @@
 Juego clásico de Sudoku implementado con tecnologías web. Jugá directamente desde tu navegador.
 
 🔗 **[Probar el juego online](https://lautaromuller.github.io/Sudoku/)**
+![Captura del juego](captura.png)
 
 ## 🚀 Tecnologías utilizadas
 
